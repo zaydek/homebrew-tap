@@ -26,6 +26,18 @@ test with:
 BREW_LIVE=1 make requirements
 ```
 
+For final machine acceptance on Snorlax or another Apple Silicon Mac, run the
+opt-in e2e receipt. It installs from the tap, runs the one-time sudoers setup,
+checks doctor, exercises `add 5s`, uninstalls the sudoers entry, and restores
+the starting Homebrew/sudoers state when possible:
+
+```sh
+make live-e2e
+```
+
+This command may show macOS administrator password prompts. Do not put it in the
+default gate.
+
 ## Rules
 
 - Keep the source private; this tap distributes binary release assets only.
@@ -34,3 +46,4 @@ BREW_LIVE=1 make requirements
 - Formula caveats must tell users to run `adderall install` and
   `adderall doctor`.
 - Keep the formula Apple Silicon macOS-only until additional binaries exist.
+- Keep the live e2e opt-in because it mutates `/etc/sudoers.d` and power state.

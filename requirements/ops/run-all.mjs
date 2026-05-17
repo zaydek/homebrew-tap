@@ -12,6 +12,10 @@ if (process.env.BREW_LIVE === "1") {
   checks.push(["brew:test", ["brew", ["test", "zaydek/tap/adderall"]]]);
 }
 
+if (process.env.ADDERALL_LIVE_E2E === "1") {
+  checks.push(["acceptance:homebrew-live-e2e", ["node", ["requirements/acceptance/homebrew-live-e2e.acceptance.mjs"]]]);
+}
+
 for (const [name, [cmd, args]] of checks) {
   console.log(`\n== ${name} ==`);
   const result = spawnSync(cmd, args, {
