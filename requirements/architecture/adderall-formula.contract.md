@@ -5,7 +5,7 @@ without exposing source code or mutating privileged system state.
 
 ## Contract
 
-- `Formula/adderall.rb` points at the `adderall-v0.1.0` release asset.
+- `Formula/adderall.rb` points at the `adderall-v0.1.1` release asset.
 - The formula sha256 matches the published release tarball.
 - The formula declares `license :cannot_represent`.
 - The formula is guarded to macOS-only, Ventura+, and Apple Silicon.

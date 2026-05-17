@@ -1,9 +1,9 @@
 class Adderall < Formula
   desc "Keep a Mac awake for a duration"
   homepage "https://github.com/zaydek/homebrew-tap"
-  url "https://github.com/zaydek/homebrew-tap/releases/download/adderall-v0.1.0/adderall-darwin-arm64.tar.gz"
-  sha256 "ee5233a5ee6b4fbe22ecf289cfa6046f53633e127fe272682f2a8556b3e8afb8"
-  version "0.1.0"
+  url "https://github.com/zaydek/homebrew-tap/releases/download/adderall-v0.1.1/adderall-darwin-arm64.tar.gz"
+  sha256 "e467b1eafc42e89f29edd337839c1931413ac405e468d5651147156af0847d7a"
+  version "0.1.1"
   license :cannot_represent
 
   depends_on :macos
