@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 const root = fileURLToPath(new URL("../..", import.meta.url));
 const formula = join(root, "Formula/adderall.rb");
+const maxMacOSMinVersion = "13.0";
 const failures = [];
 
 for (const rel of ["Formula/adderall.rb", "README.md", "COPYRIGHT", "Makefile"]) {
@@ -57,6 +58,33 @@ if (url && expectedSha && process.env.SKIP_NETWORK !== "1") {
       if (actualSha !== expectedSha) {
         failures.push(`formula sha256 mismatch: expected ${expectedSha}, got ${actualSha}`);
       }
+      if (process.platform !== "darwin") {
+        failures.push("live formula binary minos check requires macOS otool");
+      } else {
+        const extractRoot = join(temp, "extract");
+        const extract = run("mkdir", ["-p", extractRoot]);
+        if (extract.status !== 0) {
+          failures.push(`mkdir failed for formula extract: ${extract.stderr || extract.stdout}`);
+        } else {
+          const tar = run("tar", ["-xzf", tarball, "-C", extractRoot]);
+          if (tar.status !== 0) {
+            failures.push(`tar failed for formula asset: ${tar.stderr || tar.stdout}`);
+          } else {
+            const binary = join(extractRoot, "adderall-darwin-arm64/bin/adderall");
+            const loadCommands = run("otool", ["-l", binary]);
+            if (loadCommands.status !== 0) {
+              failures.push(`otool failed for formula binary: ${loadCommands.stderr || loadCommands.stdout}`);
+            } else {
+              const minos = parseMacOSMinVersion(loadCommands.stdout);
+              if (!minos) {
+                failures.push("formula binary must declare LC_BUILD_VERSION minos");
+              } else if (compareVersions(minos, maxMacOSMinVersion) > 0) {
+                failures.push(`formula binary LC_BUILD_VERSION minos must be <= ${maxMacOSMinVersion}, got ${minos}`);
+              }
+            }
+          }
+        }
+      }
     }
   } finally {
     rmSync(temp, { recursive: true, force: true });
@@ -78,6 +106,32 @@ console.log("PASS adderall formula");
 function match(regex) {
   const found = formulaText.match(regex);
   return found ? found[1] : null;
+}
+
+function parseMacOSMinVersion(loadCommands) {
+  const lines = loadCommands.split("\n");
+  for (let index = 0; index < lines.length; index += 1) {
+    if (!lines[index].includes("LC_BUILD_VERSION")) continue;
+    let sawMacOSPlatform = false;
+    for (let cursor = index + 1; cursor < lines.length && !lines[cursor].includes("Load command "); cursor += 1) {
+      const line = lines[cursor].trim();
+      if (line === "platform MACOS" || line === "platform 1") sawMacOSPlatform = true;
+      if (sawMacOSPlatform && line.startsWith("minos ")) return line.slice("minos ".length).trim();
+    }
+  }
+  return null;
+}
+
+function compareVersions(left, right) {
+  const leftParts = left.split(".").map((part) => Number.parseInt(part, 10));
+  const rightParts = right.split(".").map((part) => Number.parseInt(part, 10));
+  const length = Math.max(leftParts.length, rightParts.length);
+  for (let index = 0; index < length; index += 1) {
+    const a = Number.isFinite(leftParts[index]) ? leftParts[index] : 0;
+    const b = Number.isFinite(rightParts[index]) ? rightParts[index] : 0;
+    if (a !== b) return a > b ? 1 : -1;
+  }
+  return 0;
 }
 
 function run(command, args) {

@@ -17,9 +17,10 @@ Run from the tap root:
 make requirements
 ```
 
-The gate validates the formula shape and release checksum without running
-`adderall install` or mutating `/etc/sudoers.d`. After the tap is installed,
-run the optional live Homebrew test with:
+The gate validates the formula shape, release checksum, and downloaded binary
+macOS minimum-version stamp without running `adderall install` or mutating
+`/etc/sudoers.d`. After the tap is installed, run the optional live Homebrew
+test with:
 
 ```sh
 BREW_LIVE=1 make requirements

@@ -4,7 +4,7 @@ Homebrew tap for Zaydek-distributed tools.
 
 ## adderall
 
-Install on Apple Silicon macOS:
+Install on Apple Silicon macOS Ventura or newer:
 
 ```sh
 brew install zaydek/tap/adderall
