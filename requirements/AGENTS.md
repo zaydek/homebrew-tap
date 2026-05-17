@@ -35,8 +35,27 @@ the starting formula/sudoers state when possible:
 make live-e2e
 ```
 
-This command may show macOS administrator password prompts. Do not put it in the
-default gate.
+Precondition: Homebrew must already be installed and available on `PATH`.
+
+This command is agent-driven but human-assisted: The Operator must be present to
+type the macOS administrator password. A fresh machine normally shows two GUI
+password prompts (`adderall install`, then test cleanup via `adderall
+uninstall`); a machine that already has sudoers installed can show up to four
+prompts because the test removes, installs, removes, then restores sudoers. Each
+command has a two-minute timeout so an unanswered prompt fails the receipt
+instead of hanging forever.
+
+On a fresh machine, a passing `make live-e2e` leaves the machine clean: the test
+uninstalls `adderall` and removes the sudoers entry after proving both install
+and uninstall. To keep using `adderall` after a passing e2e, run:
+
+```sh
+brew install zaydek/tap/adderall
+adderall install
+adderall doctor
+```
+
+Do not put `make live-e2e` in the default gate.
 
 ## Rules
 

@@ -8,6 +8,7 @@ const root = fileURLToPath(new URL("../..", import.meta.url));
 const receiptDir = join(root, "requirements/acceptance/.artifacts");
 const receiptPath = join(receiptDir, "homebrew-live-e2e.json");
 const sudoersPath = "/etc/sudoers.d/add-pmset";
+const commandTimeoutMs = 120_000;
 const steps = [];
 const failures = [];
 
@@ -20,6 +21,9 @@ if (process.env.ADDERALL_LIVE_E2E !== "1") {
 
 if (process.platform !== "darwin" || process.arch !== "arm64") {
   fail(`homebrew-live-e2e.acceptance: Apple Silicon macOS required, got ${process.platform}/${process.arch}`);
+}
+if (!commandOk("brew", ["--version"])) {
+  fail("homebrew-live-e2e.acceptance: Homebrew must be installed and available on PATH");
 }
 
 const startedWithSudoers = existsSync(sudoersPath);
@@ -102,10 +106,13 @@ function run(command, args) {
   const result = spawnSync(command, args, {
     cwd: root,
     encoding: "utf8",
+    timeout: commandTimeoutMs,
   });
   steps.push({
     command: [command, ...args].join(" "),
     status: result.status,
+    signal: result.signal,
+    error: result.error ? result.error.message : "",
     stdout: result.stdout.slice(0, 4000),
     stderr: result.stderr.slice(0, 4000),
   });
