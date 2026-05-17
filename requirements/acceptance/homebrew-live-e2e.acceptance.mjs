@@ -26,8 +26,8 @@ const startedWithSudoers = existsSync(sudoersPath);
 const startedInstalled = commandOk("brew", ["list", "--versions", "adderall"]);
 
 try {
+  must("brew", ["tap", "zaydek/tap"]);
   allow("brew", ["uninstall", "adderall"]);
-  allow("brew", ["untap", "zaydek/tap"]);
 
   must("brew", ["install", "zaydek/tap/adderall"]);
   must("brew", ["list", "--versions", "adderall"]);
@@ -54,7 +54,6 @@ try {
   }
   if (!startedInstalled) {
     allow("brew", ["uninstall", "adderall"]);
-    allow("brew", ["untap", "zaydek/tap"]);
   }
 
   writeFileSync(

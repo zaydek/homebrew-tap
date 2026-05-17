@@ -29,7 +29,7 @@ BREW_LIVE=1 make requirements
 For final machine acceptance on Snorlax or another Apple Silicon Mac, run the
 opt-in e2e receipt. It installs from the tap, runs the one-time sudoers setup,
 checks doctor, exercises `add 5s`, uninstalls the sudoers entry, and restores
-the starting Homebrew/sudoers state when possible:
+the starting formula/sudoers state when possible:
 
 ```sh
 make live-e2e
