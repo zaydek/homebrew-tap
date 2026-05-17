@@ -24,6 +24,7 @@ const required = [
   'sha256 "ee5233a5ee6b4fbe22ecf289cfa6046f53633e127fe272682f2a8556b3e8afb8"',
   'version "0.1.0"',
   "license :cannot_represent",
+  "depends_on :macos",
   "depends_on macos: :ventura",
   "depends_on arch: :arm64",
   'bin.install "bin/adderall"',

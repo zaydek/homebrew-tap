@@ -6,6 +6,7 @@ class Adderall < Formula
   version "0.1.0"
   license :cannot_represent
 
+  depends_on :macos
   depends_on macos: :ventura
   depends_on arch: :arm64
 
